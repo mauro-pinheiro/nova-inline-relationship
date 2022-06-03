@@ -289,13 +289,14 @@ class NovaInlineRelationship extends Field
         $modelKey = optional($this->value)->first() ?? $resource->{$attribute}()->getRelated()->newInstance();
 
         $singularLabel = $this->singularLabel ?? Str::title(Str::singular($this->name));
+        $addButtonLabel = Str::title($this->addButtonLabel) ?? Str::title(__("Add new") . $singularLabel);
 
         $this->withMeta([
             'defaults' => $this->getDefaultsFromProperties($properties)->all(),
             'settings' => $properties->all(),
             'models' => $this->modelIds(),
             'modelKey' => Str::plural(Str::kebab(class_basename($modelKey))),
-            'addButtonLabel' => $this->addButtonLabel ?? __("Add new") . $singularLabel,
+            'addButtonLabel' => $addButtonLabel,
             'singularLabel' => $singularLabel,
             'pluralLabel' => Str::title(Str::plural($this->name)),
             'singular' => $this->isSingularRelationship($resource, $attribute),
