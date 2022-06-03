@@ -28,6 +28,8 @@ class NovaInlineRelationship extends Field
 {
     use RequireRelationship;
 
+    private $singularLabel;
+
     /**
      * The field's component.
      *
@@ -67,6 +69,12 @@ class NovaInlineRelationship extends Field
     {
         $this->resourceClass = $class;
 
+        return $this;
+    }
+
+    public function singularLabel($value)
+    {
+        $this->singularLabel = $value;
         return $this;
     }
 
@@ -212,7 +220,7 @@ class NovaInlineRelationship extends Field
      */
     public function isRelationshipDeletable(Model $model, $relation): bool
     {
-        return ! ($model->{$relation}() instanceof BelongsTo);
+        return !($model->{$relation}() instanceof BelongsTo);
     }
 
     /**
@@ -267,7 +275,7 @@ class NovaInlineRelationship extends Field
      */
     protected function resolveResourceFields($resource, $attribute, $properties)
     {
-        if (! empty($this->sortUsing) && $this->value instanceof Collection && $this->value->isNotEmpty()) {
+        if (!empty($this->sortUsing) && $this->value instanceof Collection && $this->value->isNotEmpty()) {
             $this->value = $this->value->sortBy($this->sortUsing)->values();
         }
 
@@ -284,7 +292,7 @@ class NovaInlineRelationship extends Field
             'singular' => $this->isSingularRelationship($resource, $attribute),
             'deletable' => $this->isRelationshipDeletable($resource, $attribute),
             'addChildAtStart' => $this->requireChild,
-            'sortable' => ! empty($this->sortUsing),
+            'sortable' => !empty($this->sortUsing),
         ]);
 
         $this->updateFieldValue($resource, $attribute, $properties);
@@ -330,11 +338,11 @@ class NovaInlineRelationship extends Field
 
         $class->value = $value !== null ? $value : '';
 
-        if (! empty($item['options']) && is_array($item['options'])) {
+        if (!empty($item['options']) && is_array($item['options'])) {
             $class->withMeta($item['options']);
         }
 
-        if (! empty($item['placeholder'])) {
+        if (!empty($item['placeholder'])) {
             $class->withMeta(['extraAttributes' => [
                 'placeholder' => $item['placeholder'],
             ]]);
@@ -404,12 +412,12 @@ class NovaInlineRelationship extends Field
         $attribArray = [];
 
         $properties->each(function ($child, $childAttribute) use ($attribute, &$ruleArray, &$messageArray, &$attribArray) {
-            if (! empty($child['rules'])) {
+            if (!empty($child['rules'])) {
                 $name = "{$attribute}.*.{$childAttribute}";
                 $ruleArray[$name] = $child['rules'];
                 $attribArray[$name] = $child['label'] ?? $childAttribute;
 
-                if (! empty($child['messages']) && is_array($child['messages'])) {
+                if (!empty($child['messages']) && is_array($child['messages'])) {
                     foreach ($child['messages'] as $rule => $message) {
                         $messageArray["{$name}.{$rule}"] = $message;
                     }
@@ -446,7 +454,7 @@ class NovaInlineRelationship extends Field
      */
     protected function getFieldsFromResource($model, $attribute): Collection
     {
-        $resource = ! empty($this->resourceClass)
+        $resource = !empty($this->resourceClass)
             ? new $this->resourceClass($model)
             : Nova::newResourceFromModel($model->{$attribute}()->getRelated());
 
@@ -526,15 +534,15 @@ class NovaInlineRelationship extends Field
                     $newRequest = $this->getDuplicateRequest($request, $item);
 
                     return $this->getValueFromField($field, $newRequest, $key)
-                        ?? ($field instanceof File) && ! empty($value)
-                            ? $value
-                            : null;
+                        ?? ($field instanceof File) && !empty($value)
+                        ? $value
+                        : null;
                 }
 
                 return $value;
             })->all();
 
-            if (! empty($this->sortUsing)) {
+            if (!empty($this->sortUsing)) {
                 $fields[$this->sortUsing] = $weight;
             }
 
@@ -556,7 +564,7 @@ class NovaInlineRelationship extends Field
     {
         $modelClass = get_class($model);
 
-        if (! array_key_exists($modelClass, static::$observedModels)) {
+        if (!array_key_exists($modelClass, static::$observedModels)) {
             $model::observe(NovaInlineRelationshipObserver::class);
             $model->updated_at = Carbon::now();
         }
