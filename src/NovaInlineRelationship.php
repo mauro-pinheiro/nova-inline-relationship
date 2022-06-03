@@ -29,6 +29,7 @@ class NovaInlineRelationship extends Field
     use RequireRelationship;
 
     private $singularLabel;
+    private $addButtonLabel;
 
     /**
      * The field's component.
@@ -75,6 +76,11 @@ class NovaInlineRelationship extends Field
     public function singularLabel($value)
     {
         $this->singularLabel = $value;
+        return $this;
+    }
+    public function addButtonLabel($value)
+    {
+        $this->addButtonLabel = $value;
         return $this;
     }
 
@@ -282,12 +288,15 @@ class NovaInlineRelationship extends Field
         $this->rules = [$this->getRelationshipRule($attribute, $properties)];
         $modelKey = optional($this->value)->first() ?? $resource->{$attribute}()->getRelated()->newInstance();
 
+        $singularLabel = $this->singularLabel ?? Str::title(Str::singular($this->name));
+
         $this->withMeta([
             'defaults' => $this->getDefaultsFromProperties($properties)->all(),
             'settings' => $properties->all(),
             'models' => $this->modelIds(),
             'modelKey' => Str::plural(Str::kebab(class_basename($modelKey))),
-            'singularLabel' => $this->singularLabel ?? Str::title(Str::singular($this->name)),
+            'addButtonLabel' => $this->addButtonLabel ?? __("Add new") . $singularLabel,
+            'singularLabel' => $singularLabel,
             'pluralLabel' => Str::title(Str::plural($this->name)),
             'singular' => $this->isSingularRelationship($resource, $attribute),
             'deletable' => $this->isRelationshipDeletable($resource, $attribute),
