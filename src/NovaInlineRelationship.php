@@ -360,7 +360,7 @@ class NovaInlineRelationship extends Field
 
         $item['meta'] = $class->jsonSerialize();
         $item['meta']['singularLabel'] = $item['label'] ?? $attrib;
-        $item['meta']['placeholder'] = 'Add ' . $item['meta']['singularLabel'];
+        $item['meta']['placeholder'] = __('Add') . ' ' . $item['meta']['singularLabel'];
 
         return $item;
     }
